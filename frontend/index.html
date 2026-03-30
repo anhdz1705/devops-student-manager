@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Manager</title>
+</head>
+<body>
+  <h1>Student Manager</h1>
+
+  <h2>Danh sách sinh viên</h2>
+  <ul id="list"></ul>
+
+  <h2>Thêm sinh viên</h2>
+  <input id="name" placeholder="Tên" />
+  <input id="studentId" placeholder="MSSV" />
+  <input id="class" placeholder="Lớp" />
+  <button onclick="addStudent()">Thêm</button>
+
+  <script>
+    const API = "http://localhost:5000";
+
+    async function loadStudents() {
+      const res = await fetch(API + "/students");
+      const data = await res.json();
+
+      document.getElementById("list").innerHTML =
+        data.map(s => `<li>${s.name} - ${s.studentId}</li>`).join("");
+    }
+
+    async function addStudent() {
+      await fetch(API + "/students", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: document.getElementById("name").value,
+          studentId: document.getElementById("studentId").value,
+          class: document.getElementById("class").value
+        })
+      });
+
+      loadStudents();
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>
