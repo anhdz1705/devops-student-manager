@@ -8,9 +8,17 @@ app.use(cors());
 app.use(express.json());
 
 // connect DB
-mongoose.connect(process.env.DB_URL)
-  .then(() => console.log("DB connected"))
-  .catch(err => console.log(err));
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.DB_URL);
+    console.log("DB connected");
+  } catch (err) {
+    console.log("DB connect fail, retrying...");
+    setTimeout(connectDB, 5000);
+  }
+};
+
+connectDB();
 
 // schema
 const Student = mongoose.model("Student", {
